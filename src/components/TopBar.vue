@@ -194,7 +194,10 @@
             <div class="dropdown-body">
               <ul class="profile-nav p-0 pt-3">
                 <li class="nav-item">
-                  <a href="javascript:;" class="nav-link">
+                  <a @click.prevent="editProfileModal_toggle"
+                    class="nav-link"
+                    data-toggle="modal"
+                    data-target="#EditProfileModal">
                     <i data-feather="edit"></i>
                     <span>Editar perfil</span>
                   </a>
@@ -226,6 +229,9 @@
       }
     },
     methods: {
+      editProfileModal_toggle() {
+        this.$emit("editProfileModal_toggle", true)
+      },
       async signOut() {
         try {
           await AUTH.signOut()
@@ -236,3 +242,9 @@
     }
   }
 </script>
+
+<style scoped>
+  a {
+    cursor: pointer;
+  }
+</style>

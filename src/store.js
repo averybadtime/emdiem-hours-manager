@@ -9,7 +9,10 @@ const state = {
 
 const mutations = {
   setUser(state, payload = null) {
-    state.user = payload
+    state.user = payload ? {
+      ...state.user,
+      ...payload
+    } : null
   }
 }
 

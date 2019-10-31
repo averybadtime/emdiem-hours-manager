@@ -1,11 +1,16 @@
 <template>
   <div id="app">
     <div class="main-wrapper">
+      <EditProfileModal @editProfileModal_toggle="editProfileModal_toggle"
+        v-if="isAuthenticated && editProfileModal__visible">
+      </EditProfileModal>
       <SideBar v-if="isAuthenticated"/>
       <div class="page-wrapper">
-        <TopBar v-if="isAuthenticated"/>
+        <TopBar @editProfileModal_toggle="editProfileModal_toggle"
+          v-if="isAuthenticated">
+        </TopBar>
         <transition name="fade">
-          <router-view></router-view>
+          <router-view/>
         </transition>
         <EFooter/>
       </div>
@@ -18,12 +23,17 @@
   import SideBar from "@/components/SideBar"
   import TopBar from "@/components/TopBar"
   import EFooter from "@/components/EFooter"
+  import EditProfileModal from "@/components/modals/EditProfileModal"
   export default {
     components: {
       SideBar,
       TopBar,
-      EFooter
+      EFooter,
+      EditProfileModal
     },
+    data: () => ({
+      editProfileModal__visible: false
+    }),
     watch: {
       "$route"(next, prev) {
         if (prev.name == "LOGIN") {
@@ -34,6 +44,12 @@
     computed: {
       isAuthenticated() {
         return this.$store.state.user
+      }
+    },
+    methods: {
+      editProfileModal_toggle(state) {
+        this.editProfileModal__visible = state
+        $("#EditProfileModal").modal("hide")
       }
     },
     beforeCreate() {
