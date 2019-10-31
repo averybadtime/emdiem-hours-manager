@@ -18,6 +18,17 @@ import "@/assets/fonts/feather-font/css/iconfont.css"
 import "@/assets/css/demo_1/style.css"
 
 
+Vue.filter("role", function(value) {
+  switch (value) {
+    case "_SUPER" : return "Link!"
+    case "_PM"    : return "Project Manager"
+    case "_DEV"   : return "Dev"
+    case "_CLIENT": return "Cliente"
+         default  : return "Desconocido"
+  }
+})
+
+
 AUTH.onAuthStateChanged(async user => {
   if (user) {
     const profile = await p.getByUID(user.uid)

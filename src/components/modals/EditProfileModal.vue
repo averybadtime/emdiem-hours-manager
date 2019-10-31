@@ -25,7 +25,7 @@
             </div>
             <div class="form-group">
               <label for="password">Contraseña</label>
-              <input class="form-control" id="password" name="password" placeholder="not a password" type="password" v-model="editUser.password">
+              <input class="form-control" id="password" name="password" placeholder="Esto no es una contraseña :p" type="password" v-model="editUser.password">
             </div>
             <div class="form-group">
               <label for="email">Rol</label>
@@ -50,13 +50,7 @@
     }),
     computed: {
       authUserRole() {
-        switch (this.$store.state.user.role) {
-          case "_SUPER": return "Link!"
-          case "_PM": return "Project Manager"
-          case "_DEV": "Dev"
-          case "_CLIENT": "Cliente"
-          default: return "Desconocido"
-        }
+        return this.$options.filters.role(this.$store.state.user.role)
       }
     },
     methods: {
