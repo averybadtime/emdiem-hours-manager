@@ -5,6 +5,7 @@ Vue.use(VueRouter)
 // Pages
 import Home from "@/pages/Home"
 import Login from "@/pages/Login"
+import Users from "@/pages/Users"
 
 const routes = [
   {
@@ -16,6 +17,12 @@ const routes = [
     component: Home,
     name: "HOME",
     path: "/",
+    meta: { requiresAuth: true }
+  },
+  {
+    component: Users,
+    name: "USERS",
+    path: "/usuarios",
     meta: { requiresAuth: true }
   }
 ]

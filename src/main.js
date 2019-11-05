@@ -10,6 +10,8 @@ import p from "@/profile"
   // VueSweetalert2
   import VueSweetalert2 from "vue-sweetalert2"
   Vue.use(VueSweetalert2)
+  // moment.js
+  import moment from "moment"
 
 // styles
 import "@/assets/vendors/core/core.css"
@@ -28,6 +30,19 @@ Vue.filter("role", function(value) {
   }
 })
 
+Vue.filter("status", function(value) {
+  switch (value) {
+    case "_OFF" : return "Inactivo"
+    case "_DEL" : return "Eliminado"
+         default: return "Activo"
+  }
+})
+
+Vue.filter("date", function(value, format) {
+  return format ?
+    moment.unix(value).format(format) :
+    moment.unix(value).format("DD/MM/YYYY")
+})
 
 AUTH.onAuthStateChanged(async user => {
   if (user) {

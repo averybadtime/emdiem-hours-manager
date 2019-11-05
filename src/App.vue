@@ -9,7 +9,8 @@
         <TopBar @editProfileModal_toggle="editProfileModal_toggle"
           v-if="isAuthenticated">
         </TopBar>
-        <transition name="fade">
+        <transition name="fade"
+          mode="out-in">
           <router-view/>
         </transition>
         <EFooter/>
@@ -19,6 +20,7 @@
 </template>
 
 <script>
+  import { DATABASE } from "@/firebase"
   import $ from "jquery"
   import SideBar from "@/components/SideBar"
   import TopBar from "@/components/TopBar"
@@ -31,14 +33,9 @@
       EFooter,
       EditProfileModal
     },
-    data: () => ({
-      editProfileModal__visible: false
-    }),
-    watch: {
-      "$route"(next, prev) {
-        if (prev.name == "LOGIN") {
-          feather.replace()
-        }
+    data() {
+      return {
+        editProfileModal__visible: false
       }
     },
     computed: {
@@ -50,6 +47,28 @@
       editProfileModal_toggle(state) {
         this.editProfileModal__visible = state
         $("#EditProfileModal").modal("hide")
+      },
+      async fetRoles() {
+        try {
+          const roles = (
+            await DATABASE.ref("/settings/roles")
+              .once("value")
+          ).val()
+          this.$store.commit("setRoles", roles)
+        } catch (ex) {
+          console.error("Ocurrió un error al descargar los roles. Error: ", ex)
+        }
+      },
+      async fetchURL() {
+        try {
+          const URL = (
+            await DATABASE.ref("/settings/baseURL")
+              .once("value")
+          ).val()
+          this.$store.commit("setBaseURL", URL)
+        } catch (ex) {
+          console.error("Ocurrió un error al descargar la URL base. Error: ", ex)
+        }
       }
     },
     beforeCreate() {
@@ -63,9 +82,12 @@
       require("@/assets/vendors/apexcharts/apexcharts.min.js")
       require("@/assets/vendors/progressbar.js/progressbar.min.js")
       require("@/assets/vendors/feather-icons/feather.min.js")
-      // require("@/assets/js/template.js")
       require("@/assets/js/dashboard.js")
       require("@/assets/js/datepicker.js")
+    },
+    async created() {
+      await this.fetchURL()
+      await this.fetRoles()
     }
   }
 </script>
