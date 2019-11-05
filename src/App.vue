@@ -94,6 +94,11 @@
 
 <style>
   @import url("https://fonts.googleapis.com/css?family=Overpass:300,300i,400,600,600i,800,800i,900,900i&display=swap");
+
+  tr {
+    cursor: pointer;
+  }
+
   .fade-enter,
   .fade-leave-to {
     opacity: 0;

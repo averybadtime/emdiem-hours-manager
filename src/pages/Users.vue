@@ -1,6 +1,10 @@
 <template>
   <div class="page-content">
-    <NewUserModal @newUserRegistered="newUserRegistered" @newUserModal_toggle="newUserModal_toggle"/>
+    <NewUserModal @newUserRegistered="newUserRegistered"
+      @newUserModal_toggle="newUserModal_toggle"/>
+    <EditUserModal :user="selectedUser"
+      @userUpdated="userUpdated"
+      @editUserModal_toggle="editUserModal_toggle"/>
     <div class="d-flex justify-content-between align-items-center flex-wrap grid-margin">
       <div>
         <h4>Usuarios</h4>
@@ -20,7 +24,7 @@
             <h6 class="card-title">Usuarios</h6>
             <p class="card-description">Listado general de usuarios en el sistema</p>
             <div class="table-responsive">
-              <table class="table table-striped">
+              <table class="table table-hover">
                 <thead>
                   <tr>
                     <th>#</th>
@@ -32,7 +36,10 @@
                   </tr>
                 </thead>
                 <tbody>
-                  <tr v-for="(user, index) in users"
+                  <tr @click="editUserModal_toggle('show', user)"
+                    v-for="(user, index) in users"
+                    data-target="#EditUserModal"
+                    data-toggle="modal"
                     :key="user.uid">
                     <td v-text="index + 1"></td>
                     <td v-text="user.name"></td>
@@ -54,17 +61,24 @@
 <script>
   import { DATABASE } from "@/firebase"
   import NewUserModal from "@/components/modals/NewUserModal"
+  import EditUserModal from "@/components/modals/EditUserModal"
   export default {
     components: {
-      NewUserModal
+      NewUserModal,
+      EditUserModal
     },
     data() {
       return {
-        rootRef: DATABASE.ref(),
-        users: null
+        rootRef     : DATABASE.ref(),
+        selectedUser: null,
+        users       : null
       }
     },
     methods: {
+      editUserModal_toggle(state, user = null) {
+        this.selectedUser = user
+        $("#EditUserModal").modal(state)
+      },
       async getUsers() {
         try {
           const users = (
@@ -74,7 +88,7 @@
           const _users = []
           for (const uid in users) {
             _users.push({
-              ...uid,
+              ...{ uid },
               ...users[uid]
             })
           }
@@ -89,13 +103,18 @@
       },
       newUserRegistered(user) {
         this.users.push(user)
+      },
+      userUpdated(user) {
+        const index = this.users.findIndex(x => x.uid == this.selectedUser.uid)
+        if (index > -1) {
+          this.$set(this.users, index, { ...this.users[index], ...user })
+        }
       }
     },
     async created() {
       try {
         await this.getUsers()
       } catch (ex) {
-        console.error(ex)
         this.$swal({
           text: "Ocurrió un error al obtener la lista de usuarios. Intente nuevamente.",
           type: "error"
