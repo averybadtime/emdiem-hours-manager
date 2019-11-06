@@ -28,11 +28,10 @@
           </a>
           <div class="collapse" id="emails">
             <ul class="nav sub-menu">
-              <li class="nav-item">
-                <router-link to="/clientes/gas-express" class="nav-link">Gas Express</router-link>
-              </li>
-              <li class="nav-item">
-                <router-link to="/clientes/the-people-ticker" class="nav-link">The People Ticker</router-link>
+              <li v-for="(client, index) in clients"
+                :key="index"
+                class="nav-item">
+                <router-link :to="`/cliente/${ client.slug }`" class="nav-link">{{ client.name }}</router-link>
               </li>
             </ul>
           </div>
@@ -49,8 +48,40 @@
 </template>
 
 <script>
+  import { DATABASE } from "@/firebase"
   import PerfectScrollbar from "perfect-scrollbar"
   export default {
+    data() {
+      return {
+        clients: [],
+        clientsOnChildAdded: null,
+        clientsOnChildRemoved: null,
+        clientsRef: null
+      }
+    },
+    methods: {
+      subscribeToClients() {
+        this.clientsRef = DATABASE.ref("/clients")
+        this.clientsOnChildAdded = this.clientsRef.on("child_added", snapshot => {
+          const ClientData = snapshot.val()
+          ClientData.key = snapshot.key
+          this.clients.push(ClientData)
+        })
+        this.clientsOnChildRemoved = this.clientsRef.on("child_removed", snapshot => {
+          const index = this.clients.findIndex(x => x.key == snapshot.key)
+          if (index > -1) {
+            this.$delete(this.clients, index)
+          }
+        })
+      },
+      unsubscribeToClients() {
+        this.clientsRef.off("child_added", this.clientsOnChildAdded)
+        this.clientsRef.off("child_removed", this.clientsOnChildRemoved)
+      }
+    },
+    created() {
+      this.subscribeToClients()
+    },
     mounted() {
       (function($) {
         $(function() {
@@ -158,6 +189,9 @@
           $(".form-check label,.form-radio label").append('<i class="input-frame"></i>')
         })
       })(jQuery)
+    },
+    beforeDestroy() {
+      this.unsubscribeToClients()
     }
   }
 </script>

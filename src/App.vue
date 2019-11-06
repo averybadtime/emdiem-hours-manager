@@ -107,4 +107,16 @@
   .fade-leave-active {
     transition: opacity .5s;
   }
+
+  .LetterCircle {
+    align-items: center;
+    background-color: #727cf5;
+    color: white;
+    display: flex;
+    font-size: 18px;
+    font-weight: bold;
+    height: 35px;
+    justify-content: center;
+    overflow: hidden;
+  }
 </style>

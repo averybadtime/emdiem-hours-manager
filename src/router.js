@@ -6,6 +6,12 @@ Vue.use(VueRouter)
 import Home from "@/pages/Home"
 import Login from "@/pages/Login"
 import Users from "@/pages/Users"
+import Client from "@/pages/Client"
+  import ClientDashboard from "@/pages/client/Dashboard"
+  import ClientStories from "@/pages/client/Stories"
+  import ClientTasks from "@/pages/client/Tasks"
+  import ClientTimeline from "@/pages/client/Timeline"
+  import ClientAdvanced from "@/pages/client/Advanced"
 
 const routes = [
   {
@@ -24,6 +30,38 @@ const routes = [
     name: "USERS",
     path: "/usuarios",
     meta: { requiresAuth: true }
+  },
+  {
+    component: Client,
+    path: "/cliente/:slug",
+    meta: { requiresAuth: true },
+    children: [
+      {
+        component: ClientDashboard,
+        name: "CLIENT_DASHBOARD",
+        path: "/"
+      },
+      {
+        component: ClientStories,
+        name: "CLIENT_STORIES",
+        path: "historias"
+      },
+      {
+        component: ClientTasks,
+        name: "CLIENT_TASKS",
+        path: "tareas"
+      },
+      {
+        component: ClientTimeline,
+        name: "CLIENT_TIMELINE",
+        path: "actividad"
+      },
+      {
+        component: ClientAdvanced,
+        name: "CLIENT_ADVANCED",
+        path: "avanzado"
+      }
+    ]
   }
 ]
 
