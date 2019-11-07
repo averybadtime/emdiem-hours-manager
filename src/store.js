@@ -6,6 +6,13 @@ Vue.use(Vuex)
 const state = {
   baseURL: null,
   roles: {},
+  storyStates: {
+    "_PENDING"    : "Pendiente",
+    "_IN_PROGRESS": "En progreso",
+    "_QA"         : "Q&A",
+    "_DONE"       : "Completado",
+    "_STUCK"      : "Atascado"
+  },
   user: null
 }
 

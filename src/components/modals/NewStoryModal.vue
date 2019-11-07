@@ -1,20 +1,20 @@
 <template>
   <div class="modal fade"
-    id="EditStoryModal"
+    id="NewStoryModal"
     tabindex="-1"
     role="dialog"
-    aria-labelledby="EditStoryModal"
+    aria-labelledby="NewStoryModal"
     aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered" role="document">
       <div class="modal-content">
         <div class="modal-header">
-          <h5 v-if="story" class="modal-title" id="EditStoryModal">Editar información de historia - {{ story.title }}</h5>
+          <h5 class="modal-title" id="NewStoryModal">Nuevo registro de historia</h5>
           <button type="button" class="close" data-dismiss="modal" aria-label="Close">
             <span aria-hidden="true">&times;</span>
           </button>
         </div>
         <div class="modal-body">
-          <form v-if="editStory">
+          <form>
             <div class="form-group">
               <label for="title">Título</label>
               <input class="form-control"
@@ -22,7 +22,7 @@
                 name="title"
                 placeholder="Título"
                 type="text"
-                v-model="editStory.title">
+                v-model="newStory.title">
             </div>
             <div class="form-group">
               <label for="description">Descripción</label>
@@ -32,17 +32,17 @@
                 placeholder="Descripción"
                 cols="30"
                 rows="6"
-                v-model="editStory.description">
+                v-model="newStory.description">
               </textarea>
             </div>
             <div class="row">
               <div class="col-6">
                 <label for="status">Estado</label>
                 <select class="form-control"
+                  disabled
                   name="status"
                   id="status"
-                  v-model="editStory.status">
-                  <option value="" disabled selected>Seleccionar estado</option>
+                  v-model="newStory.status">
                   <option v-for="(label, value) in states"
                     :key="value"
                     :label="label"
@@ -55,7 +55,7 @@
                 <select class="form-control"
                   name="level"
                   id="level"
-                  v-model.number="editStory.level">
+                  v-model.number="newStory.level">
                   <option value="" disabled selected>Seleccionar dificultad</option>
                   <option v-for="level in difficultLevels"
                     :key="level"
@@ -69,7 +69,7 @@
         </div>
         <div class="modal-footer">
           <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
-          <button @click.prevent="update" type="button" class="btn btn-primary">Actualizar</button>
+          <button @click.prevent="save" type="button" class="btn btn-primary">Guardar</button>
         </div>
       </div>
     </div>
@@ -78,51 +78,52 @@
 
 <script>
   import { DATABASE } from "@/firebase"
+  import moment from "moment"
   export default {
-    props: {
-      story: Object
-    },
     data() {
       return {
-        editStory: null,
-        difficultLevels: [1, 2, 3, 5, 8, 13]
+        difficultLevels: [1, 2, 3, 5, 8, 13],
+        newStory: {
+          level: "",
+          status: "_PENDING"
+        },
+        rootRef: DATABASE.ref()
       }
     },
     computed: {
+      slug() {
+        return this.$route.params.slug
+      },
       states() {
         return this.$store.state.storyStates
       }
     },
-    watch: {
-      story(next) {
-        this.editStory = Object.assign({}, next)
-      }
-    },
     methods: {
-      async update() {
-        const { key, title, description, status, level } = this.editStory
+      async save() {
+        const { title, description, status, level } = this.newStory
         if (
           title && title.trim() != "" &&
           description && description.trim() != "" &&
           status && status.trim() != "" &&
           level && level.toString().trim() != ""
         ) {
-          const updates = { title, description, status, level }
           try {
-            await DATABASE.ref(`/stories/${ this.story.key }/data`)
-              .update(updates)
-            this.$emit("storyInfoUpdated", {
-              ...{ key },
-              ...updates
+            const NewStoryKey = await this.rootRef.child(`/client-stories/${ this.slug }`).push().key
+            Object.assign(this.newStory, {
+              createdAt: moment().unix(),
+              createdBy: this.$store.state.user.uid
             })
+            const updates = {}
+            updates[`/client-stories/${ this.slug }/${ NewStoryKey }`] = true
+            updates[`/stories/${ NewStoryKey }/data`] = this.newStory
+            await this.rootRef.update(updates)
           } catch (ex) {
             return this.$swal({
-              text : "Ocurrió un error al actualizar la información de la historia.",
+              text : "Ocurrió un error al registrar nueva historia.",
               title: "Error",
               type : "error"
             })
           }
-          $("#EditStoryModal").modal("hide")
         } else {
           return this.$swal({
             text : "Asegúrese de rellenar todos los campos.",
@@ -130,8 +131,13 @@
             type : "error"
           })
         }
+        this.newStory = {
+          level: "",
+          status: "_PENDING"
+        }
+        $("#NewStoryModal").modal("hide")
         this.$swal({
-          text : "Información de historia actualizada con éxito.",
+          text : "Nueva historia registrada con éxito.",
           title: "¡Hecho!",
           type : "success"
         })

@@ -7,7 +7,10 @@
     </div>
     <div class="w-100">
       <div class="d-flex justify-content-between">
-        <h6 class="text-body mb-2">{{ story.title }}</h6>
+        <h6 class="text-body mb-2">
+          <StoryStatusBadge :status="story.status"/>
+          {{ story.title }}
+        </h6>
         <p class="text-muted tx-12">{{ story.createdAt | date("DD/MM/YYYY") }}</p>
       </div>
       <p class="text-muted tx-13">{{ story.description }}</p>
@@ -16,7 +19,11 @@
 </template>
 
 <script>
+  import StoryStatusBadge from "@/components/StoryStatusBadge"
   export default {
+    components: {
+      StoryStatusBadge
+    },
     props: {
       story: Object
     },
