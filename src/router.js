@@ -49,7 +49,7 @@ const routes = [
       {
         component: ClientTasks,
         name: "CLIENT_TASKS",
-        path: "tareas"
+        path: "tareas/:story_key?"
       },
       {
         component: ClientTimeline,

@@ -1,3 +1,13 @@
 <template>
-  <h1>This is my client tasks!</h1>
+  <h1>{{ storyKey }}</h1>
 </template>
+
+<script>
+  export default {
+    computed: {
+      storyKey() {
+        return this.$route.params.story_key
+      }
+    }
+  }
+</script>
