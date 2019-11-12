@@ -37,6 +37,7 @@
 
 <script>
   import { DATABASE } from "@/firebase"
+  import { UsersMixin } from "@/mixins/users"
   import EditTaskModal from "@/components/modals/EditTaskModal"
   import TaskListItem from "@/components/TaskListItem"
   export default {
@@ -44,6 +45,9 @@
       EditTaskModal,
       TaskListItem
     },
+    mixins: [
+      UsersMixin
+    ],
     data() {
       return {
         rootRef     : DATABASE.ref(),
@@ -110,7 +114,7 @@
           for (const TaskKey in StoryTaskKeys) {
               const task               = await this.fetchTask(TaskKey)
                     task.key           = TaskKey
-                    task.createdByName = "J"
+                    task.createdByName = await this.getUserProfileName(task.createdBy)
               story.tasks.push(task)
             }
             return story
@@ -147,15 +151,19 @@
         if (this.storyIndex > -1) {
           this.taskIndex = this.stories[this.storyIndex].tasks.findIndex(x => x.key == TaskKey)
           if (this.taskIndex > -1) {
-            console.log(this.storyIndex, this.taskIndex)
             this.selectedTask = this.stories[this.storyIndex].tasks[this.taskIndex]
             $("#EditTaskModal").modal("show")
           }
         }
       },
       taskInfoUpdated(UpdatedTask) {
-        console.log(this.storyIndex, this.taskIndex)
-        if (this.storyIndex && this.taskIndex) {
+        if (this.storyIndex > -1 && this.taskIndex > -1) {
+          const { title, description } = UpdatedTask
+          const updates = { title, description }
+          this.$set(this.stories[this.storyIndex].tasks, this.taskIndex, {
+            ...this.stories[this.storyIndex].tasks[this.taskIndex],
+            ...updates
+          })
           Object.assign(this.stories[this.storyIndex].tasks[this.taskIndex], UpdatedTask)
         }
         this.storyIndex = null

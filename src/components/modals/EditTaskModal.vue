@@ -43,7 +43,7 @@
                 placeholder="Desarrollador"
                 readonly
                 type="text"
-                :value="editTask.createdBy">
+                :value="editTask.createdByName">
             </div>
             <div class="form-group">
               <label for="hours">Horas empleadas</label>
