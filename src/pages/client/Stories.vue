@@ -30,7 +30,7 @@
 
 <script>
   import { DATABASE } from "@/firebase"
-  import { UsersMixin } from "@/mixins/Users"
+  import { UsersMixin } from "@/mixins/users"
   import EditStoryModal from "@/components/modals/EditStoryModal"
   import NewStoryModal from "@/components/modals/NewStoryModal"
   import StoryListItem from "@/components/StoryListItem"
