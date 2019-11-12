@@ -1,10 +1,11 @@
 <template>
   <div>
+    <NewTaskModal @newTask="newTask" :stories-list="storyKeys"/>
     <EditTaskModal @taskInfoUpdated="taskInfoUpdated" :task="selectedTask"/>
     <div class="d-flex justify-content-between">
       <h6 class="card-title mb-2">Tareas</h6>
       <button class="btn btn-primary btn-icon-text mb-2"
-        data-target="#NewStoryModal"
+        data-target="#NewTaskModal"
         data-toggle="modal">
         <i class="btn-icon-prepend" data-feather="plus-circle"></i>
         Nueva tarea
@@ -24,7 +25,7 @@
                       v-for="task in story.tasks"
                       :key="task.key"
                       :task="task"/>
-                  </transition-group>
+                  </transition-group> 
                 </div>
               </div>
             </transition-group>
@@ -39,10 +40,12 @@
   import { DATABASE } from "@/firebase"
   import { UsersMixin } from "@/mixins/users"
   import EditTaskModal from "@/components/modals/EditTaskModal"
+  import NewTaskModal from "@/components/modals/NewTaskModal"
   import TaskListItem from "@/components/TaskListItem"
   export default {
     components: {
       EditTaskModal,
+      NewTaskModal,
       TaskListItem
     },
     mixins: [
@@ -55,7 +58,11 @@
         stories     : [],
         storyIndex  : null,
         taskIndex   : null,
-        tasksRef    : null
+        tasksRef    : null,
+        storyKeys: [],
+        storyKeysOnChildAdded: null,
+        storyKeysOnChildRemoved: null,
+        storyKeysRef: null
       }
     },
     computed: {
@@ -115,7 +122,7 @@
               const task               = await this.fetchTask(TaskKey)
                     task.key           = TaskKey
                     task.createdByName = await this.getUserProfileName(task.createdBy)
-              story.tasks.push(task)
+              story.tasks.unshift(task)
             }
             return story
         } catch (ex) {
@@ -146,6 +153,13 @@
           }
         }
       },
+      newTask(payload) {
+        const { storyKey, task } = payload
+        const index = this.stories.findIndex(x => x.key == storyKey)
+        if (index > -1) {
+          this.stories[index].tasks.unshift(task)
+        }
+      },
       show(StoryKey, TaskKey) {
         this.storyIndex = this.stories.findIndex(x => x.key == StoryKey)
         if (this.storyIndex > -1) {
@@ -155,6 +169,26 @@
             $("#EditTaskModal").modal("show")
           }
         }
+      },
+      subscribeToStoryKeys() {
+        this.storyKeysRef = this.rootRef.child(`/client-stories/${ this.slug }`)
+        this.storyKeysOnChildAdded = this.storyKeysRef.on("child_added", async snapshot => {
+          const { key } = snapshot
+          const StoryLabel = (
+            await this.rootRef.child(`/stories/${ key }/data/title`)
+              .once("value")
+          ).val()
+          this.storyKeys.push({
+            label: StoryLabel,
+            value: key
+          })
+        })
+        this.storyKeysOnChildRemoved = this.storyKeysRef.on("child_removed", snapshot => {
+          const index = this.storyKeys.findIndex(x => x.value == snapshot.key)
+          if (index > -1) {
+            this.storyKeys.splice(index, 1)
+          }
+        })
       },
       taskInfoUpdated(UpdatedTask) {
         if (this.storyIndex > -1 && this.taskIndex > -1) {
@@ -168,13 +202,21 @@
         }
         this.storyIndex = null
         this.taskIndex  = null
+      },
+      unsubscribeToStoryKeys() {
+        this.storyKeysRef.off("child_added", this.storyKeysOnChildAdded)
+        this.storyKeysRef.off("child_removed", this.storyKeysOnChildRemoved)
       }
     },
     created() {
+      this.subscribeToStoryKeys()
       this.fetchTasks()
     },
     mounted() {
       feather.replace()
+    },
+    beforeDestroy() {
+      this.unsubscribeToStoryKeys()
     }
   }
 </script>
