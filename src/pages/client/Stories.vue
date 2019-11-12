@@ -30,6 +30,7 @@
 
 <script>
   import { DATABASE } from "@/firebase"
+  import { UsersMixin } from "@/mixins/Users"
   import EditStoryModal from "@/components/modals/EditStoryModal"
   import NewStoryModal from "@/components/modals/NewStoryModal"
   import StoryListItem from "@/components/StoryListItem"
@@ -39,6 +40,9 @@
       NewStoryModal,
       StoryListItem
     },
+    mixins: [
+      UsersMixin
+    ],
     data() {
       return {
         rootRef              : DATABASE.ref(),
@@ -54,16 +58,6 @@
         try {
           return (
             await this.rootRef.child(`/stories/${ key }/data`)
-              .once("value")
-          ).val()
-        } catch (ex) {
-          throw ex
-        }
-      },
-      async getCreatedByName(uid) {
-        try {
-          return (
-            await this.rootRef.child(`/profiles/${ uid }/name`)
               .once("value")
           ).val()
         } catch (ex) {
@@ -89,7 +83,7 @@
         this.storiesOnChildAdded = this.clientStoriesRef.on("child_added", async snapshot => {
           const { key }             = snapshot
           const Story               = await this.getStory(key)
-          const name                = await this.getCreatedByName(Story.createdBy)
+          const name                = await this.getUserProfileName(Story.createdBy)
                 Story.key           = key
                 Story.createdByName = name
           this.stories.push(Story)
