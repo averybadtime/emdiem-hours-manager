@@ -104,12 +104,15 @@
     computed: {
       about() {
         if (this.client) {
-          const { bio, createdAt, location, email, website} = this.client
+          const { address, bio, createdAt, id, location, email, phone, website } = this.client
           return {
+            address,
             bio,
             createdAt,
+            id,
             location: location || "No especificada",
             email,
+            phone,
             website: website || "No especificada"
           }
         }

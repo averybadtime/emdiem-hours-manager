@@ -8,8 +8,20 @@
         <p class="text-muted">{{ about.createdAt | date }}</p>
       </div>
       <div class="mt-3">
+        <label class="tx-11 font-weight-bold mb-0 text-uppercase">NIT/CC:</label>
+        <p class="text-muted">{{ about.id }}</p>
+      </div>
+      <div class="mt-3">
         <label class="tx-11 font-weight-bold mb-0 text-uppercase">Ubicación:</label>
         <p class="text-muted">{{ about.location }}</p>
+      </div>
+      <div class="mt-3">
+        <label class="tx-11 font-weight-bold mb-0 text-uppercase">Teléfono:</label>
+        <p class="text-muted">{{ about.phone }}</p>
+      </div>
+      <div class="mt-3">
+        <label class="tx-11 font-weight-bold mb-0 text-uppercase">Dirección:</label>
+        <p class="text-muted">{{ about.address }}</p>
       </div>
       <div class="mt-3">
         <label class="tx-11 font-weight-bold mb-0 text-uppercase">E-mail:</label>
@@ -22,6 +34,7 @@
     </div>
   </div>
 </template>
+
 <script>
   export default {
     props: {

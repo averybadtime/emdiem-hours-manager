@@ -55,6 +55,7 @@
       return {
         clients: [],
         clientsOnChildAdded: null,
+        clientsOnChildChanged: null,
         clientsOnChildRemoved: null,
         clientsRef: null
       }
@@ -67,6 +68,12 @@
           ClientData.key = snapshot.key
           this.clients.push(ClientData)
         })
+        this.clientsOnChildChanged = this.clientsRef.on("child_changed", snapshot => {
+          const index = this.clients.findIndex(x => x.key == snapshot.key)
+          if (index > -1) {
+            this.clients[index].name = snapshot.val().name
+          }
+        })  
         this.clientsOnChildRemoved = this.clientsRef.on("child_removed", snapshot => {
           const index = this.clients.findIndex(x => x.key == snapshot.key)
           if (index > -1) {
@@ -76,6 +83,7 @@
       },
       unsubscribeToClients() {
         this.clientsRef.off("child_added", this.clientsOnChildAdded)
+        this.clientsRef.off("child_changed", this.clientsOnChildChanged)
         this.clientsRef.off("child_removed", this.clientsOnChildRemoved)
       }
     },
