@@ -10,7 +10,7 @@ import Client from "@/pages/Client"
   import ClientDashboard from "@/pages/client/Dashboard"
   import ClientStories from "@/pages/client/Stories"
   import ClientTasks from "@/pages/client/Tasks"
-  import ClientTimeline from "@/pages/client/Timeline"
+  import ClientActivity from "@/pages/client/Activity"
   import ClientAdvanced from "@/pages/client/Advanced"
 
 const routes = [
@@ -52,8 +52,8 @@ const routes = [
         path: "tareas/:story_key?"
       },
       {
-        component: ClientTimeline,
-        name: "CLIENT_TIMELINE",
+        component: ClientActivity,
+        name: "CLIENT_ACTIVITY",
         path: "actividad"
       },
       {

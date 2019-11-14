@@ -90,7 +90,7 @@
           {
             icon: "activity",
             label: "Actividad",
-            route: "CLIENT_TIMELINE"
+            route: "CLIENT_ACTIVITY"
           },
           {
             icon: "sliders",
