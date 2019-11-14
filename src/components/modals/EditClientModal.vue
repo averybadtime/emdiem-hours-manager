@@ -151,7 +151,7 @@
           }
         } else {
           return this.$swal({
-            text : "El campo 'E-mail' es obligatorio.",
+            text : "Asegúrese de rellenar todos los campos.",
             title: "Campos incompletos",
             type : "error"
           })
