@@ -1,12 +1,15 @@
 <template>
   <div class="page-content">
+    <AddHoursModal/>
     <NewClientModal/>
     <div class="d-flex justify-content-between align-items-center">
       <h4 class="mb-3 mb-md-0">Dashboard</h4>
       <div class="d-flex align-items-center flex-wrap text-nowrap">
-        <button type="button" class="btn btn-outline-primary btn-icon-text mb-2 mb-md-0 mr-2">
+        <button type="button"
+          class="btn btn-outline-primary btn-icon-text mb-2 mb-md-0 mr-2"
+          @click="showAddHoursModal">
           <i class="btn-icon-prepend" data-feather="plus-circle"></i>
-          Compra de horas
+          Nueva compra de horas
         </button>
         <button type="button"
           class="btn btn-primary btn-icon-text mb-2 mb-md-0"
@@ -20,12 +23,17 @@
 </template>
 
 <script>
+  import AddHoursModal from "@/components/modals/AddHoursModal"
   import NewClientModal from "@/components/modals/NewClientModal"
   export default {
     components: {
+      AddHoursModal,
       NewClientModal
     },
     methods: {
+      showAddHoursModal() {
+        $("#AddHoursModal").modal("show")
+      },
       showNewClientModal() {
         $("#NewClientModal").modal("show")
       }

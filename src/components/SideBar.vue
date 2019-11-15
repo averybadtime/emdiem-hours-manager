@@ -53,7 +53,6 @@
   export default {
     data() {
       return {
-        clients: [],
         clientsOnChildAdded: null,
         clientsOnChildChanged: null,
         clientsOnChildRemoved: null,
@@ -66,25 +65,26 @@
         this.clientsOnChildAdded = this.clientsRef.on("child_added", snapshot => {
           const ClientData = snapshot.val()
           ClientData.key = snapshot.key
-          this.clients.push(ClientData)
+          this.$store.commit("pushClient", ClientData)
         })
         this.clientsOnChildChanged = this.clientsRef.on("child_changed", snapshot => {
-          const index = this.clients.findIndex(x => x.key == snapshot.key)
-          if (index > -1) {
-            this.clients[index].name = snapshot.val().name
-          }
-        })  
+          const ClientData = snapshot.val()
+          ClientData.key = snapshot.key
+          this.$store.commit("updateClient", ClientData)
+        })
         this.clientsOnChildRemoved = this.clientsRef.on("child_removed", snapshot => {
-          const index = this.clients.findIndex(x => x.key == snapshot.key)
-          if (index > -1) {
-            this.$delete(this.clients, index)
-          }
+          this.$store.commit("spliceClient", snapshot.key)
         })
       },
       unsubscribeToClients() {
         this.clientsRef.off("child_added", this.clientsOnChildAdded)
         this.clientsRef.off("child_changed", this.clientsOnChildChanged)
         this.clientsRef.off("child_removed", this.clientsOnChildRemoved)
+      }
+    },
+    computed: {
+      clients() {
+        return this.$store.state.clients
       }
     },
     created() {

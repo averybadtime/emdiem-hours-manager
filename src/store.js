@@ -5,6 +5,7 @@ Vue.use(Vuex)
 
 const state = {
   baseURL: null,
+  clients: [],
   roles: {},
   storyStates: {
     "_PENDING"    : "Pendiente",
@@ -17,6 +18,21 @@ const state = {
 }
 
 const mutations = {
+  pushClient(state, payload) {
+    state.clients.push(payload)
+  },
+  updateClient(state, payload) {
+    const index = state.clients.findIndex(x => x.key == payload.key)
+    if (index > -1) {
+      state.clients[index] = payload
+    }
+  },
+  spliceClient(state, ClientKey) {
+    const index = state.clients.findIndex(x => x.key == ClientKey)
+    if (index > -1) {
+      state.clients.splice(index, 1)
+    }
+  },
   setBaseURL(state, string) {
     state.baseURL = string
   },
