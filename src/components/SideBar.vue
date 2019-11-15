@@ -15,7 +15,7 @@
         <li class="nav-item nav-category">Administrador</li>
         <li class="nav-item">
           <router-link to="/" class="nav-link">
-            <i class="link-icon" data-feather="users"></i>
+            <i class="link-icon" data-feather="compass"></i>
             <span class="link-title">Dashboard</span>
           </router-link>
         </li>
