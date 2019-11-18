@@ -31,7 +31,11 @@
               <li v-for="(client, index) in clients"
                 :key="index"
                 class="nav-item">
-                <router-link :to="`/cliente/${ client.slug }`" class="nav-link">{{ client.name }}</router-link>
+                <router-link :to="`/cliente/${ client.slug }`"
+                  class="nav-link"
+                  :class="{ active: slug == client.slug }">
+                  {{ client.name }}
+                </router-link>
               </li>
             </ul>
           </div>
@@ -85,6 +89,9 @@
     computed: {
       clients() {
         return this.$store.state.clients
+      },
+      slug() {
+        return this.$route.params.slug
       }
     },
     created() {
