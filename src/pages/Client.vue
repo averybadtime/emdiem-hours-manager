@@ -1,8 +1,6 @@
 <template>
   <div class="page-content">
-    <EditClientModal @clientInfoUpdated="clientInfoUpdated"
-      :slug="slug"
-      :client="client"/>
+    <EditClientModal :slug="slug" :client="client"/>
     <div class="profile-page tx-13">
       <div class="row">
         <div class="col-12 grid-margin">
@@ -70,7 +68,6 @@
     },
     data() {
       return {
-        client: null,
         headerItems: [
           {
             icon: "columns",
@@ -118,35 +115,15 @@
         }
         return {}
       },
+      client() {
+        return this.$store.state.clients.find(x => x.key == this.slug) || {}
+      },
       routeName() {
         return this.$route.name
       },
       slug() {
         return this.$route.params.slug
       }
-    },
-    watch: {
-      slug(next) {
-        this.fetchClient()
-      }
-    },
-    methods: {
-      clientInfoUpdated(payload) {
-        this.client = payload
-      },
-      async fetchClient() {
-        try {
-          this.client = (
-            await this.rootRef.child(`/clients/${ this.slug }`)
-              .once("value")
-          ).val()
-        } catch (ex) {
-          console.error(ex)
-        }
-      }
-    },
-    created() {
-      this.fetchClient()
     },
     mounted() {
       feather.replace()

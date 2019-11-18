@@ -24,7 +24,7 @@ const mutations = {
   updateClient(state, payload) {
     const index = state.clients.findIndex(x => x.key == payload.key)
     if (index > -1) {
-      state.clients[index] = payload
+      Vue.set(state.clients, index, payload)
     }
   },
   spliceClient(state, ClientKey) {

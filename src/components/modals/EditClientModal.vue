@@ -140,7 +140,6 @@
             }
             await DATABASE.ref(`/clients/${ this.slug }`)
               .update(updates)
-            this.$emit("clientInfoUpdated", this.editClient)
             $("#EditClientModal").modal("hide")
           } catch (ex) {
             return this.$swal({
@@ -162,6 +161,9 @@
           type : "success"
         })
       }
+    },
+    created() {
+      this.editClient = Object.assign({}, this.client)
     }
   }
 </script>
