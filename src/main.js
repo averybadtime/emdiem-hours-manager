@@ -44,6 +44,8 @@ Vue.filter("date", function(value, format) {
     moment.unix(value).format("DD/MM/YYYY")
 })
 
+let app
+
 AUTH.onAuthStateChanged(async user => {
   if (user) {
     const profile = await p.getByUID(user.uid)
@@ -58,9 +60,11 @@ AUTH.onAuthStateChanged(async user => {
 
   router.replace(user ? "/" : "/login")
 
-  new Vue({
-    router,
-    store,
-    render: h => h(App)
-  }).$mount("#app")
+  if (!app) {
+    new Vue({
+      router,
+      store,
+      render: h => h(App)
+    }).$mount("#app")
+  }
 })
