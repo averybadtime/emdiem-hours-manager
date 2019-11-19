@@ -25,6 +25,9 @@
         </div>
       </div>
       <p class="text-muted tx-14">{{ transaction.notes || "Sin observaciones." }}</p>
+      <h4>
+        <span class="badge badge-success badge-large">{{ transaction.amount | currency }}</span>
+      </h4>
       <p class="text-muted tx-12">{{ transaction.createdAt | date }}</p>
     </div>
   </div>

@@ -47,6 +47,15 @@
                 v-model.number="newTransaction.hours">
             </div>
             <div class="form-group">
+              <label for="amount">Monto $</label>
+              <input class="form-control"
+                id="amount"
+                name="amount"
+                placeholder="Monto/Costo"
+                type="number"
+                v-model.number="newTransaction.amount">
+            </div>
+            <div class="form-group">
               <label for="notes">Observaciones</label>
               <textarea name="notes"
                 class="form-control"
@@ -87,8 +96,9 @@
     },
     methods: {
       async save() {
-        const { client, detail, hours, notes } = this.newTransaction
+        const { amount, client, detail, hours, notes } = this.newTransaction
         if (
+          amount && amount.trim() != "" &&
           client && client.trim() != "" &&
           detail && detail.trim() != "" &&
           hours && hours.toString().trim() != ""

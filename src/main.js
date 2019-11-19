@@ -12,6 +12,8 @@ import p from "@/profile"
   Vue.use(VueSweetalert2)
   // moment.js
   import moment from "moment"
+  // vue-currency-filter
+  import VueCurrencyFilter from "vue-currency-filter"
 
 // styles
 import "@/assets/vendors/core/core.css"
@@ -19,6 +21,14 @@ import "@/assets/vendors/sweetalert2/sweetalert2.min.css"
 import "@/assets/fonts/feather-font/css/iconfont.css"
 import "@/assets/css/demo_1/style.css"
 
+Vue.use(VueCurrencyFilter, {
+  symbol            : "$",
+  thousandsSeparator: ".",
+  fractionCount     : 0,
+  fractionSeparator : ",",
+  symbolPosition    : "front",
+  symbolSpacing     : true
+})
 
 Vue.filter("role", function(value) {
   switch (value) {
