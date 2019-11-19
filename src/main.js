@@ -71,7 +71,7 @@ AUTH.onAuthStateChanged(async user => {
   router.replace(user ? "/" : "/login")
 
   if (!app) {
-    new Vue({
+    app = new Vue({
       router,
       store,
       render: h => h(App)

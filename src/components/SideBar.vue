@@ -206,6 +206,7 @@
       })(jQuery)
     },
     beforeDestroy() {
+      this.$set(this.$store.state, "clients", [])
       this.unsubscribeToClients()
     }
   }
