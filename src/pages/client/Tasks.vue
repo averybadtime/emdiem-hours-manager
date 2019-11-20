@@ -1,10 +1,10 @@
 <template>
   <div>
-    <NewTaskModal @newTask="newTask" :stories-list="storyKeys"/>
-    <EditTaskModal @taskInfoUpdated="taskInfoUpdated" :task="selectedTask"/>
-    <div class="d-flex justify-content-between">
-      <h6 class="card-title mb-2">Tareas</h6>
-      <button class="btn btn-primary btn-icon-text mb-2"
+    <NewTaskModal :stories-list="storyKeys"/>
+    <EditTaskModal :task="selectedTask"/>
+    <div class="d-flex justify-content-between mb-2">
+      <h6 class="card-title">Tareas</h6>
+      <button class="btn btn-primary btn-icon-text"
         data-target="#NewTaskModal"
         data-toggle="modal">
         <i class="btn-icon-prepend" data-feather="plus-circle"></i>
@@ -15,19 +15,17 @@
       <div class="row">
         <div class="col-12">
           <div class="d-flex flex-column">
-            <transition-group name="fade">
-              <div v-for="story in stories"
-                :key="story.key">
-                <div v-if="story.tasks.length > 0" class="mb-5">
-                  <h6 class="card-title custom-card-title mb-0">{{ story.title }}</h6>
-                  <transition-group name="fade">
-                    <TaskListItem @show="() => show(story.key, task.key)"
-                      v-for="task in story.tasks"
-                      :key="task.key"
-                      :task="task"/>
-                  </transition-group> 
-                </div>
+            <transition name="fade">
+              <div v-if="storyKey">
+                <h4 class="card-title mb-2 mt-3">{{ story }}</h4>
               </div>
+            </transition>
+            <transition-group name="fade">
+              <task-list-item v-for="task in tasks"
+                :key="task.key"
+                :task="task"
+                @show="() => show(task.key)">
+              </task-list-item>
             </transition-group>
           </div>
         </div>
@@ -55,14 +53,18 @@
       return {
         rootRef     : DATABASE.ref(),
         selectedTask: null,
-        stories     : [],
-        storyIndex  : null,
         taskIndex   : null,
         tasksRef    : null,
+        story: null,
         storyKeys: [],
         storyKeysOnChildAdded: null,
         storyKeysOnChildRemoved: null,
-        storyKeysRef: null
+        storyKeysRef: null,
+        tasks: [],
+        tasksOnChildAdded: null,
+        tasksOnChildChanged: null,
+        tasksOnChildRemoved: null,
+        tasksRef: null
       }
     },
     computed: {
@@ -78,96 +80,19 @@
     },
     watch: {
       "$route"(next) {
-        this.fetchTasks()
+        if (this.tasksRef) {
+          this.unsubscribeToTasks()
+          this.tasksRef = null
+          this.subscribeToTasks()
+        }
       }
     },
     methods: {
-      async fetchStoryData(StoryKey) {
-        try {
-          return (
-            await this.rootRef.child(`/stories/${ StoryKey }/data`)
-              .once("value")
-          ).val()
-        } catch (ex) {
-          throw ex
-        }
-      },
-      async fetchStoryTaskKeys(StoryKey) {
-        try {
-          return (
-            await this.rootRef.child(`/stories/${ StoryKey }/tasks`)
-              .once("value")
-          ).val()
-        } catch (ex) {
-          throw ex
-        }
-      },
-      async fetchTask(TaskKey) {
-        try {
-          return (
-            await this.rootRef.child(`/tasks/${ TaskKey }`)
-              .once("value")
-          ).val()
-        } catch (ex) {
-          throw ex
-        }
-      },
-      async fetchFullStory(StoryKey) {
-        try {
-          const story = await this.fetchStoryData(StoryKey)
-          story.key = StoryKey
-          story.tasks = []
-          const StoryTaskKeys = await this.fetchStoryTaskKeys(StoryKey)
-          for (const TaskKey in StoryTaskKeys) {
-              const task               = await this.fetchTask(TaskKey)
-                    task.key           = TaskKey
-                    task.createdByName = await this.getUserProfileName(task.createdBy)
-              story.tasks.unshift(task)
-            }
-            return story
-        } catch (ex) {
-          throw ex
-        }
-      },
-      async fetchTasks() {
-        this.stories = []
-        if (this.storyKey) {
-          try {
-            const story = await this.fetchFullStory(this.storyKey)
-            this.stories.push(story)
-          } catch (ex) {
-            console.error(ex)
-          }
-        } else {
-          try {
-            const ClientStories = (
-              await this.rootRef.child(`/client-stories/${ this.slug }`)
-                .once("value")
-            ).val()
-            for (const StoryKey in ClientStories) {
-              const story = await this.fetchFullStory(StoryKey)
-              this.stories.push(story)
-            }
-          } catch (ex) {
-            console.error(ex)
-          }
-        }
-      },
-      newTask(payload) {
-        const { storyKey, task } = payload
-        const index = this.stories.findIndex(x => x.key == storyKey)
-        if (index > -1) {
-          this.stories[index].tasks.unshift(task)
-        }
-      },
-      show(StoryKey, TaskKey) {
-        this.storyIndex = this.stories.findIndex(x => x.key == StoryKey)
-        if (this.storyIndex > -1) {
-          this.taskIndex = this.stories[this.storyIndex].tasks.findIndex(x => x.key == TaskKey)
-          if (this.taskIndex > -1) {
-            this.selectedTask = this.stories[this.storyIndex].tasks[this.taskIndex]
-            $("#EditTaskModal").modal("show")
-          }
+      show(TaskKey) {
+        this.taskIndex = this.tasks.findIndex(x => x.key == TaskKey)
+        if (this.taskIndex > -1) {
+          this.selectedTask = this.tasks[this.taskIndex]
+          $("#EditTaskModal").modal("show")
         }
       },
       subscribeToStoryKeys() {
@@ -190,36 +115,76 @@
           }
         })
       },
-      taskInfoUpdated(UpdatedTask) {
-        if (this.storyIndex > -1 && this.taskIndex > -1) {
-          const { title, description } = UpdatedTask
-          const updates = { title, description }
-          this.$set(this.stories[this.storyIndex].tasks, this.taskIndex, {
-            ...this.stories[this.storyIndex].tasks[this.taskIndex],
-            ...updates
-          })
-          Object.assign(this.stories[this.storyIndex].tasks[this.taskIndex], UpdatedTask)
-        }
-        this.storyIndex = null
-        this.taskIndex  = null
-      },
       unsubscribeToStoryKeys() {
         this.storyKeysRef.off("child_added", this.storyKeysOnChildAdded)
         this.storyKeysRef.off("child_removed", this.storyKeysOnChildRemoved)
+      },
+      async subscribeToTasks() {
+        this.tasks = []
+        this.story = null
+
+        if (this.storyKey) {
+
+          try {
+            this.story = (
+              await this.rootRef.child(`/stories/${ this.storyKey }/data/title`)
+                .once("value")
+            ).val()
+          } catch (ex) {
+            this.story = {}
+          }
+
+          this.tasksRef = this.rootRef.child("/tasks")
+            .orderByChild("storyKey")
+            .equalTo(this.storyKey)
+        } else {
+          this.tasksRef = this.rootRef.child("/tasks")
+            .orderByChild("clientKey")
+            .equalTo(this.slug)
+        }
+
+        
+          
+          
+        this.storyKeysOnChildAdded = this.tasksRef.on("child_added", async snapshot => {
+          const Task = snapshot.val()
+          Task.key = snapshot.key
+          Task.createdByName = await this.getUserProfileName(Task.createdBy)
+          this.tasks.push(Task)
+        })
+        this.storyKeysOnChildChanged = this.tasksRef.on("child_changed", snapshot => {
+          const index = this.tasks.findIndex(x => x.key == snapshot.key)
+          if (index > -1) {
+            this.$set(this.tasks, index, Object.assign(this.tasks[index], snapshot.val()))
+          }
+        })
+        this.storyKeysOnChildRemoved = this.tasksRef.on("child_removed", snapshot => {
+          const index = this.tasks.findIndex(x => x.key == snapshot.key)
+          if (index > -1) {
+            this.$delete(this.tasks, index)
+          }
+        })
+      },
+      unsubscribeToTasks() {
+        this.tasksRef.off("child_added", this.storyKeysOnChildAdded)
+        this.tasksRef.off("child_changed", this.storyKeysOnChildChanged)
+        this.tasksRef.off("child_removed", this.storyKeysOnChildRemoved)
       }
     },
     created() {
       this.subscribeToStoryKeys()
-      this.fetchTasks()
+      this.subscribeToTasks()
     },
     mounted() {
       feather.replace()
     },
     beforeDestroy() {
       this.unsubscribeToStoryKeys()
+      this.unsubscribeToTasks()
     }
   }
 </script>
+
 <style scoped>
   .custom-card-title {
     color: #aaaaaa;

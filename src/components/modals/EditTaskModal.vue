@@ -93,10 +93,6 @@
           try {
             await DATABASE.ref(`/tasks/${ this.task.key }`)
               .update(updates)
-            this.$emit("taskInfoUpdated", {
-              ...{ key },
-              ...updates
-            })
           } catch (ex) {
             return this.$swal({
               text : "Ocurrió un error al actualizar la información de la tarea.",

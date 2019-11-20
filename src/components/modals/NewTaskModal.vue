@@ -113,10 +113,12 @@
             const key = await this.rootRef.child(`/stories/${ story }/tasks`).push().key
             const { user } = this.$store.state
             const task = {
+              clientKey: this.$route.params.slug,
               createdAt: moment().unix(),
               createdBy: user.uid,
               description,
               hours,
+              storyKey,
               title
             }
             const updates = {}
