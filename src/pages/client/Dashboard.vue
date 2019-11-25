@@ -3,116 +3,36 @@
     <h6 class="card-title">Dashboard</h6>
     <div class="row">
       <div class="col-md-6 col-lg-3 grid-margin stretch-card">
-        <div class="card bg-primary text-white">
-          <div class="card-body">
-            <div class="d-flex justify-content-between align-items-baseline">
-              <h6 class="card-title mb-0 text-white">Adquiridas</h6>
-              <div class="dropdown mb-2">
-                <button class="btn p-0" type="button" id="hours" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                  <i class="icon-lg text-white pb-3px" data-feather="more-horizontal"></i>
-                </button>
-                <div class="dropdown-menu" aria-labelledby="hours">
-                  <router-link to="/actividad" class="dropdown-item d-flex align-items-center">
-                    <i class="icon-sm mr-2" data-feather="activity"></i>
-                    Ver actividad
-                  </router-link>
-                </div>
-              </div>
-            </div>
-            <div class="row">
-              <div class="col-6 col-md-12">
-                <h3 class="mb-2">{{ consumedHours }}</h3>
-                <div class="d-flex align-items-baseline">
-                  <p>Horas consumidas</p>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
+        <stat-card
+          description="Horas consumidas"
+          :stat="consumedHours"
+          title="Consumidas"
+          type="primary"
+        ></stat-card>
       </div>
       <div class="col-md-6 col-lg-3 grid-margin stretch-card">
-        <div class="card bg-danger text-white">
-          <div class="card-body">
-            <div class="d-flex justify-content-between align-items-baseline">
-              <h6 class="card-title mb-0 text-white">Disponibles</h6>
-              <div class="dropdown mb-2">
-                <button class="btn p-0" type="button" id="hours" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                  <i class="icon-lg text-white pb-3px" data-feather="more-horizontal"></i>
-                </button>
-                <div class="dropdown-menu" aria-labelledby="hours">
-                  <router-link to="/actividad" class="dropdown-item d-flex align-items-center">
-                    <i class="icon-sm mr-2" data-feather="activity"></i>
-                    Ver actividad
-                  </router-link>
-                </div>
-              </div>
-            </div>
-            <div class="row">
-              <div class="col-6 col-md-12">
-                <h3 class="mb-2">{{ availableHours }}</h3>
-                <div class="d-flex align-items-baseline">
-                  <p>Horas disponibles</p>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
+        <stat-card
+          description="Horas disponibles"
+          :stat="availableHours"
+          title="Disponibles"
+          type="danger"
+        ></stat-card>
       </div>
       <div class="col-md-6 col-lg-3 grid-margin stretch-card">
-        <div class="card bg-success text-white">
-          <div class="card-body">
-            <div class="d-flex justify-content-between align-items-baseline">
-              <h6 class="card-title mb-0 text-white">Historias</h6>
-              <div class="dropdown mb-2">
-                <button class="btn p-0" type="button" id="hours" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                  <i class="icon-lg text-white pb-3px" data-feather="more-horizontal"></i>
-                </button>
-                <div class="dropdown-menu" aria-labelledby="hours">
-                  <router-link to="/actividad" class="dropdown-item d-flex align-items-center">
-                    <i class="icon-sm mr-2" data-feather="activity"></i>
-                    Ver actividad
-                  </router-link>
-                </div>
-              </div>
-            </div>
-            <div class="row">
-              <div class="col-6 col-md-12">
-                <h3 class="mb-2">{{ storiesCount }}</h3>
-                <div class="d-flex align-items-baseline">
-                  <p>Historias en total</p>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
+        <stat-card
+          description="Historias en total"
+          :stat="storiesCount"
+          title="Historias"
+          type="success"
+        ></stat-card>
       </div>
       <div class="col-md-6 col-lg-3 grid-margin stretch-card">
-        <div class="card bg-warning text-white">
-          <div class="card-body">
-            <div class="d-flex justify-content-between align-items-baseline">
-              <h6 class="card-title mb-0 text-white">Tareas</h6>
-              <div class="dropdown mb-2">
-                <button class="btn p-0" type="button" id="hours" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                  <i class="icon-lg text-white pb-3px" data-feather="more-horizontal"></i>
-                </button>
-                <div class="dropdown-menu" aria-labelledby="hours">
-                  <router-link to="/actividad" class="dropdown-item d-flex align-items-center">
-                    <i class="icon-sm mr-2" data-feather="activity"></i>
-                    Ver actividad
-                  </router-link>
-                </div>
-              </div>
-            </div>
-            <div class="row">
-              <div class="col-6 col-md-12">
-                <h3 class="mb-2">{{ tasksCount }}</h3>
-                <div class="d-flex align-items-baseline">
-                  <p>Tareas en total</p>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
+        <stat-card
+          description="Tareas en total"
+          :stat="tasksCount"
+          title="Tareas"
+          type="warning"
+        ></stat-card>
       </div>
       <div class="col-md-12 col-lg-8 grid-margin mt-2">
         <h6 class="card-title mb-2">Participantes</h6>
@@ -143,11 +63,14 @@
 <script>
   import { DATABASE } from "@/firebase"
   import moment from "moment"
+  import StatCard from "@/components/StatCard"
   export default {
+    components: {
+      StatCard
+    },
     data() {
       return {
         adquiredHours: null,
-        availableHours: null,
         consumedHours: null,
         rootRef: DATABASE.ref(),
         storiesCount: null,
@@ -155,41 +78,18 @@
       }
     },
     computed: {
+      availableHours() {
+        const index = this.$store.state.clients.findIndex(x => x.key == this.slug)
+        if (index > -1) {
+          return this.$store.state.clients[index].availableHours || 0
+        }
+        return 0
+      },
       slug() {
         return this.$route.params.slug
       }
     },
     methods: {
-      async getAcquiredHours() {
-        try {
-          const LastActivity = (
-            await this.rootRef.child(`/transactions/${ this.slug }/`)
-              .limitToLast(5)
-              .once("value")
-          ).val()
-          const ChartData = {
-            labels: [],
-            values: []
-          }
-          for (const key in LastActivity) {
-            const Transaction = LastActivity[key]
-            ChartData.labels.push(moment(Transaction.createdAt).calendar())
-            ChartData.values.push(Transaction.hours)
-          }
-        } catch (ex) {
-          console.error(ex)
-        }
-      },
-      async getAvailableHours() {
-        try {
-          this.availableHours = (
-            await this.rootRef.child(`/clients/${ this.slug }/availableHours`)
-              .once("value")
-          ).val() || 0
-        } catch (ex) {
-          console.error(ex)
-        }
-      },
       async getConsumedHours() {
         try {
           const Tasks = (
@@ -205,7 +105,7 @@
           }
           this.consumedHours = count
         } catch (ex) {
-          console.error(ex)
+          console.error("Error obteniendo las horas consumidas - ERROR: ", ex)
         }
       },
       async getTotalStories() {
@@ -215,7 +115,7 @@
               .once("value")
           ).numChildren()
         } catch (ex) {
-          console.error(ex)
+          console.error("Error obteniendo las historias totales - ERROR: ", ex)
         }
       },
       async getTotalTasks() {
@@ -227,13 +127,11 @@
               .once("value")
           ).numChildren()
         } catch (ex) {
-          console.error(ex)
+          console.error("Error obteniendo las tareas totales - ERROR: ", ex)
         }
       }
     },
     created() {
-      this.getAcquiredHours()
-      this.getAvailableHours()
       this.getConsumedHours()
       this.getTotalStories()
       this.getTotalTasks()
