@@ -122,6 +122,7 @@
                 const updates = {}
                 updates[`/clients/${ client }/availableHours`] = NewAvailableHours
                 updates[`/transactions/${ client }/${ NewTransactionKey }`] = {
+                  amount,
                   client,
                   createdAt,
                   detail,
