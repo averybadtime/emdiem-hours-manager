@@ -112,8 +112,9 @@
           try {
             const key = await this.rootRef.child(`/stories/${ story }/tasks`).push().key
             const { user } = this.$store.state
+            const clientKey = this.$route.params.slug
             const task = {
-              clientKey: this.$route.params.slug,
+              clientKey,
               createdAt: moment().unix(),
               createdBy: user.uid,
               description,
@@ -121,13 +122,32 @@
               storyKey,
               title
             }
-            const updates = {}
-            updates[`/stories/${ storyKey }/tasks/${ key }`] = true
-            updates[`/tasks/${ key }`] = task
-            await this.rootRef.update(updates)
-            task.createdByName = user.name
-            task.key = key
-            this.$emit("newTask", { storyKey, task })
+            const availableHours = (
+              await this.rootRef.child(`/clients/${ clientKey }/availableHours`)
+                .once("value")
+            ).val()
+            if (availableHours) {
+              if (availableHours > hours) {
+                const newAvailableHours = availableHours ? availableHours - hours : hours
+                const   updates                                   = {}
+                updates[`/clients/${ clientKey }/availableHours`] = newAvailableHours
+                updates[`/stories/${ storyKey }/tasks/${ key }`]  = true
+                updates[`/tasks/${ key }`]                        = task
+                await this.rootRef.update(updates)
+              } else {
+                return this.$swal({
+                  text : "El número de horas empleadas es mayor al disponibles para este cliente.",
+                  title: "Operación imposible",
+                  type : "error"
+                })
+              }
+            } else {
+              return this.$swal({
+                text : "El cliente no tiene horas disponibles.",
+                title: "Operación imposible",
+                type : "error"
+              })
+            }
           } catch (ex) {
             return this.$swal({
               text : "Ocurrió un error al registrar nueva tarea.",

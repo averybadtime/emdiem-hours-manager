@@ -98,7 +98,7 @@
       async save() {
         const { amount, client, detail, hours, notes } = this.newTransaction
         if (
-          amount && amount.trim() != "" &&
+          amount && amount.toString().trim() != "" &&
           client && client.trim() != "" &&
           detail && detail.trim() != "" &&
           hours && hours.toString().trim() != ""
