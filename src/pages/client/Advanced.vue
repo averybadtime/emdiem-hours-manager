@@ -1,6 +1,6 @@
 <template>
   <div>
-    <assign-user-modal/>
+    <assign-user-modal :assigned-users="linkedUsers"/>
     <div class="card-title">Ajustes avanzados</div>
     <hr>
     <div class="row">
