@@ -13,19 +13,20 @@
             Asignar nuevo usuario
           </button>
         </div>
-        <div class="table-responsive">
+        <div class="table-responsive"
+          v-if="linkedUsers.length > 0">
           <table class="table">
             <thead>
               <th>Nombre</th>
+              <th>Rol</th>
               <th>E-mail</th>
-              <th>Acciones</th>
               <th></th>
             </thead>
             <tbody>
               <tr v-for="user in linkedUsers"
                 :key="user.uid">
                 <td>{{ user.name }}</td>
-                <td>{{ user.email }}</td>
+                <td>{{ user.role | role }}</td>
                 <td>{{ user.email }}</td>
                 <td>
                   <button @click="unlinkUser(user.uid)"
@@ -36,6 +37,9 @@
               </tr>
             </tbody>
           </table>
+        </div>
+        <div class="alert alert-warning" role="alert" v-else>
+          No se han asignado usuarios a este proyecto.
         </div>
       </div>
     </div>
