@@ -188,6 +188,7 @@
               </div>
               <div class="info text-center">
                 <p class="name font-weight-bold mb-0">{{ authUserName }}</p>
+                <span class="badge badge-primary">{{ authUserRole | role }}</span>
                 <p class="email text-muted mb-3">{{ authUserEmail }}</p>
               </div>
             </div>
@@ -223,6 +224,9 @@
     computed: {
       authUserName() {
         return this.$store.state.user.name
+      },
+      authUserRole() {
+        return this.$store.state.user.role
       },
       authUserEmail() {
         return this.$store.state.user.email
