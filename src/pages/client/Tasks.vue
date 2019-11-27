@@ -4,7 +4,8 @@
     <EditTaskModal :task="selectedTask"/>
     <div class="d-flex justify-content-between mb-2">
       <h6 class="card-title">Tareas</h6>
-      <button class="btn btn-primary btn-icon-text"
+      <button v-if="$isAdmin()"
+        class="btn btn-primary btn-icon-text"
         data-target="#NewTaskModal"
         data-toggle="modal">
         <i class="btn-icon-prepend" data-feather="plus-circle"></i>

@@ -8,6 +8,7 @@
         <div class="d-flex justify-content-between align-items-center mb-3">
           <h6 class="card-title mb-0">Usuarios asignados</h6>
           <button @click="showAssignUserModal"
+            v-if="$isAdmin()"
             class="btn btn-primary btn-icon-text">
             <i class="btn-icon-prepend" data-feather="plus-circle"></i>
             Asignar nuevo usuario
@@ -28,7 +29,7 @@
                 <td>{{ user.name }}</td>
                 <td>{{ user.role | role }}</td>
                 <td>{{ user.email }}</td>
-                <td>
+                <td v-if="$isAdmin()">
                   <button @click="unlinkUser(user.uid)"
                     class="btn btn-danger btn-xs">
                     Remover
@@ -115,7 +116,7 @@
               this.linkedUsers.push(User)
             })
             .catch(ex => {
-              console.error("Fallo al cargar ", uid)  
+              console.error("Fallo al cargar ", uid)
             })
         })
         this.usersLinksProjectsOnChildRemoved = this.usersLinksProjectsRef.on("child_removed", snapshot => {

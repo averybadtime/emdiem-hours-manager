@@ -8,7 +8,9 @@
     <div class="modal-dialog modal-dialog-centered" role="document">
       <div class="modal-content">
         <div class="modal-header">
-          <h5 v-if="story" class="modal-title" id="EditStoryModal">Editar información de historia - {{ story.title }}</h5>
+          <h5 v-if="story" class="modal-title" id="EditStoryModal">
+            <span v-if="$isAdmin() || $isPM()">Editar información de historia - </span>{{ story.title }}
+          </h5>
           <button type="button" class="close" data-dismiss="modal" aria-label="Close">
             <span aria-hidden="true">&times;</span>
           </button>
@@ -21,6 +23,7 @@
                 id="title"
                 name="title"
                 placeholder="Título"
+                :readonly="!$isAdmin() && !$isPM()"
                 type="text"
                 v-model="editStory.title">
             </div>
@@ -30,6 +33,7 @@
                 id="description"
                 name="description"
                 placeholder="Descripción"
+                :readonly="!$isAdmin() && !$isPM()"
                 cols="30"
                 rows="6"
                 v-model="editStory.description">
@@ -41,6 +45,7 @@
                 <select class="form-control"
                   name="status"
                   id="status"
+                  :disabled="!$isAdmin() && !$isPM()"
                   v-model="editStory.status">
                   <option value="" disabled selected>Seleccionar estado</option>
                   <option v-for="(label, value) in states"
@@ -55,6 +60,7 @@
                 <select class="form-control"
                   name="level"
                   id="level"
+                  :disabled="!$isAdmin() && !$isPM()"
                   v-model.number="editStory.level">
                   <option value="" disabled selected>Seleccionar dificultad</option>
                   <option v-for="level in difficultLevels"
@@ -67,7 +73,7 @@
             </div>
           </form>
         </div>
-        <div class="modal-footer">
+        <div class="modal-footer" v-if="$isAdmin() || $isPM()">
           <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
           <button @click.prevent="update" type="button" class="btn btn-primary">Actualizar</button>
         </div>

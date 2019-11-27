@@ -8,7 +8,9 @@
     <div class="modal-dialog modal-dialog-centered" role="document">
       <div class="modal-content">
         <div class="modal-header">
-          <h5 v-if="task" class="modal-title" id="EditTaskModal">Editar información de tarea - {{ task.title }}</h5>
+          <h5 v-if="task" class="modal-title" id="EditTaskModal">
+            <span v-if="$isAdmin() || $isPM()">Editar información de tarea - </span>{{ task.title }}
+          </h5>
           <button type="button" class="close" data-dismiss="modal" aria-label="Close">
             <span aria-hidden="true">&times;</span>
           </button>
@@ -21,6 +23,7 @@
                 id="title"
                 name="title"
                 placeholder="Título"
+                :readonly="!$isAdmin() && !$isPM()"
                 type="text"
                 v-model="editTask.title">
             </div>
@@ -30,6 +33,7 @@
                 id="description"
                 name="description"
                 placeholder="Descripción"
+                :readonly="!$isAdmin() && !$isPM()"
                 cols="30"
                 rows="6"
                 v-model="editTask.description">
@@ -51,12 +55,13 @@
                 id="hours"
                 name="hours"
                 placeholder="Horas empleadas"
+                :readonly="!$isAdmin() && !$isPM()"
                 type="number"
                 v-model.number="editTask.hours">
             </div>
           </form>
         </div>
-        <div class="modal-footer">
+        <div v-if="$isAdmin() || $isPM()" class="modal-footer">
           <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
           <button @click.prevent="update" type="button" class="btn btn-primary">Actualizar</button>
         </div>

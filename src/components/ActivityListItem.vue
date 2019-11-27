@@ -8,7 +8,7 @@
     <div class="w-100">
       <div class="d-flex justify-content-between">
         <h6 class="text-body mb-1">{{ transaction.detail }}</h6>
-        <div class="dropdown">
+        <div v-if="$isAdmin()" class="dropdown">
           <button class="btn p-0" type="button" :id="transaction.key" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
             <i class="icon-lg text-muted pb-3px" data-feather="more-horizontal"></i>
           </button>
@@ -25,9 +25,9 @@
         </div>
       </div>
       <p class="text-muted tx-14">{{ transaction.notes || "Sin observaciones." }}</p>
-      <h4>
+      <h5>
         <span class="badge badge-success badge-large">{{ transaction.amount | currency }}</span>
-      </h4>
+      </h5>
       <p class="text-muted tx-12">{{ transaction.createdAt | date }}</p>
     </div>
   </div>
