@@ -5,6 +5,7 @@ import router from "@/router"
 import store from "@/store"
 import { AUTH } from "@/firebase"
 import p from "@/profile"
+import RolesPlugin from "@/plugins/roles"
 
 // Vendors
   // VueSweetalert2
@@ -29,6 +30,8 @@ Vue.use(VueCurrencyFilter, {
   symbolPosition    : "front",
   symbolSpacing     : true
 })
+
+Vue.use(RolesPlugin)
 
 Vue.filter("role", function(value) {
   switch (value) {

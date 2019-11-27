@@ -40,7 +40,7 @@
             </ul>
           </div>
         </li>
-        <li class="nav-item">
+        <li v-if="$isAdmin()" class="nav-item">
           <router-link to="/usuarios" class="nav-link">
             <i class="link-icon" data-feather="users"></i>
             <span class="link-title">Usuarios</span>
