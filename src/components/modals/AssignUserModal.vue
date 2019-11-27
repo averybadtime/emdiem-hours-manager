@@ -127,9 +127,12 @@
       },
       async save() {
         if (this.selectedUser && this.selectedUser.trim() != "") {
+          const updates = {}
+          updates[`/users-in-projects/${ this.slug }/${ this.selectedUser }`] = true
+          updates[`/projects-by-user/${ this.selectedUser }/${ this.slug }`]  = true
           try {
-            await this.rootRef.child(`user-links-projects/${ this.slug }/${ this.selectedUser }`)
-              .set(true)
+            // await this.rootRef.child(`user-links-projects/${ this.slug }/${ this.selectedUser }`).set(true)
+            await this.rootRef.update(updates)
             $("#AssignUserModal").modal("hide")
             this.selectedRole = null
             this.selectedUser = null

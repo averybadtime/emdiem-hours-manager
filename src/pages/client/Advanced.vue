@@ -86,8 +86,11 @@
             showCancelButton : true
           })
           if (action.value) {
-            await this.rootRef.child(`user-links-projects/${ this.slug }/${ uid }`)
-              .set(null)
+            const updates = {}
+            updates[`/users-in-projects/${ this.slug }/${ uid }`] = null
+            updates[`/projects-by-user/${ uid }/${ this.slug }`]  = null
+            // await this.rootRef.child(`user-links-projects/${ this.slug }/${ uid }`).set(null)
+            await this.rootRef.update(updates)
             this.$swal({
               text : "Usuario removido del proyecto con éxito.",
               title: "¡Hecho!",
@@ -103,7 +106,7 @@
         }
       },
       subscribeToUserLinks() {
-        this.usersLinksProjectsRef = this.rootRef.child(`user-links-projects/${ this.slug }`)
+        this.usersLinksProjectsRef = this.rootRef.child(`/users-in-projects/${ this.slug }`)
         this.usersLinksProjectsOnChildAdded = this.usersLinksProjectsRef.on("child_added", snapshot => {
           const uid = snapshot.key
           this.getUserProfile(uid)
