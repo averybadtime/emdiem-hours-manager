@@ -34,7 +34,7 @@
           type="warning"
         ></stat-card>
       </div>
-      <div class="col-md-12 col-lg-6 grid-margin mt-2">
+      <div class="col-md-12 col-xl-6 grid-margin mt-2">
         <h6 class="card-title mb-3">Últimas historias</h6>
         <ul class="list-group"
           v-if="lastestStories.length > 0">
