@@ -23,7 +23,7 @@
         <li class="nav-item">
           <a class="nav-link" data-toggle="collapse" href="#emails" role="button" aria-expanded="false" aria-controls="emails">
             <i class="link-icon" data-feather="briefcase"></i>
-            <span class="link-title">Clientes</span>
+            <span class="link-title">Proyectos</span>
             <i class="link-arrow" data-feather="chevron-down"></i>
           </a>
           <div class="collapse" id="emails">
@@ -50,17 +50,30 @@
     </div>
   </nav>
 </template>
-
 <script>
   import { DATABASE } from "@/firebase"
+  import { ClientsMixin } from "@/mixins/clients"
   import PerfectScrollbar from "perfect-scrollbar"
   export default {
+    mixins: [
+      ClientsMixin
+    ],
     data() {
       return {
         clientsOnChildAdded: null,
         clientsOnChildChanged: null,
         clientsOnChildRemoved: null,
-        clientsRef: null
+        clientsRef: null,
+        role: this.$store.state.user.role,
+        rootRef: DATABASE.ref()
+      }
+    },
+    computed: {
+      clients() {
+        return this.$store.state.clients
+      },
+      slug() {
+        return this.$route.params.slug
       }
     },
     methods: {
@@ -84,18 +97,38 @@
         this.clientsRef.off("child_added", this.clientsOnChildAdded)
         this.clientsRef.off("child_changed", this.clientsOnChildChanged)
         this.clientsRef.off("child_removed", this.clientsOnChildRemoved)
-      }
-    },
-    computed: {
-      clients() {
-        return this.$store.state.clients
       },
-      slug() {
-        return this.$route.params.slug
+      subscribeToClients__notAdmin() {
+        const { uid } = this.$store.state.user
+        this.clientsRef = this.rootRef.child(`/projects-by-user/${ uid }`)
+        this.clientsOnChildAdded = this.clientsRef.on("child_added", async snapshot => {
+          const { key } = snapshot
+          let Client
+          try {
+            Client = await this.getClientByKey(key)
+          } catch (ex) {
+            return console.log("Error obteniendo: ", key)
+          }
+          Client.key = key
+          this.$store.commit("pushClient", Client)
+        })
+        this.clientsOnChildRemoved = this.clientsRef.on("child_removed", snapshot => {
+          this.$store.commit("spliceClient", snapshot.key)
+        })
+      },
+      unsubscribeToClients__notAdmin() {
+        this.clientsRef.off("child_added", this.clientsOnChildAdded)
+        this.clientsRef.off("child_removed", this.clientsOnChildRemoved)
       }
     },
     created() {
-      this.subscribeToClients()
+      switch (this.role) {
+        case "_SUPER" : return this.subscribeToClients()
+        case "_PM"    :
+        case "_DEV"   :
+        case "_CLIENT":
+          return this.subscribeToClients__notAdmin()
+      }
     },
     mounted() {
       (function($) {
@@ -207,7 +240,13 @@
     },
     beforeDestroy() {
       this.$set(this.$store.state, "clients", [])
-      this.unsubscribeToClients()
+      switch (this.role) {
+        case "_SUPER" : return this.unsubscribeToClients()
+        case "_PM"    :
+        case "_DEV"   :
+        case "_CLIENT":
+          return this.unsubscribeToClients__notAdmin()
+      }
     }
   }
 </script>
