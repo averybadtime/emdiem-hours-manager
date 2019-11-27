@@ -98,7 +98,8 @@
             <h6 class="card-title">Últimas tareas</h6>
             <story-list-item v-for="story in lastestStories"
               :key="story.key"
-              :story="story">
+              :story="story"
+              no-tasks>
             </story-list-item>
           </div>
         </div>

@@ -14,7 +14,10 @@
         <p class="text-muted tx-12">{{ story.createdAt | date("DD/MM/YYYY") }}</p>
       </div>
       <p class="text-muted tx-13 mb-2">{{ story.description }}</p>
-      <router-link :to="{ name: 'CLIENT_TASKS', params: { story_key: story.key } }">Ver tareas enlazadas</router-link>
+      <router-link :to="{ name: 'CLIENT_TASKS', params: { story_key: story.key } }"
+        v-if="! noTasks">
+        Ver tareas enlazadas
+      </router-link>
     </div>
   </a>
 </template>
@@ -26,6 +29,7 @@
       StoryStatusBadge
     },
     props: {
+      noTasks: Boolean,
       story: Object
     },
     computed: {
