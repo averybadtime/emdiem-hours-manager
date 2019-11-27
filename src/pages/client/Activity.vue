@@ -2,12 +2,17 @@
   <div>
     <EditActivityModal :transaction="selectedTransaction"/>
     <h6 class="card-title">Actividad</h6>
-    <transition-group name="fade">
-      <ActivityListItem @show="show"
-        v-for="transaction in transactions"
-        :key="transaction.key"
-        :transaction="transaction"/>
-    </transition-group>
+    <div v-if="transactions.length > 0">
+      <transition-group name="fade">
+        <ActivityListItem @show="show"
+          v-for="transaction in transactions"
+          :key="transaction.key"
+          :transaction="transaction"/>
+      </transition-group>
+    </div>
+    <div class="alert alert-warning d-flex" role="alert" v-else>
+      No hay actividad registrada para este proyecto.
+    </div>
   </div>
 </template>
 

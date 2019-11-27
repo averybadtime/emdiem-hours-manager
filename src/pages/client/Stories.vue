@@ -14,13 +14,17 @@
     <div class="container">
       <div class="row">
         <div class="col-12">
-          <div class="d-flex flex-column">
+          <div class="d-flex flex-column"
+            v-if="stories.length > 0">
             <transition-group name="fade">
               <StoryListItem @show="show"
                 v-for="story in stories"
                 :key="story.key"
                 :story="story"/>
             </transition-group>
+          </div>
+          <div class="alert alert-warning d-flex" role="alert" v-else>
+            No hay historias registradas para este proyecto.
           </div>
         </div>
       </div>
