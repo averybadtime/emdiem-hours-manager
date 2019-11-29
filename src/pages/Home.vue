@@ -19,6 +19,7 @@
         </button>
       </div>
     </div>
+    <client-dashboard/>
     <div class="row">
       <div class="col-6 col-md-3 grid-margin stretch-card">
         <stat-card
@@ -55,28 +56,33 @@
     </div>
     <div class="row">
       <div class="col-12">
-        <div class="table-responsive">
-          <table class="table">
-            <thead>
-              <th>Cliente</th>
-              <th>Fecha de creación</th>
-              <th>Historias</th>
-              <th>Tareas</th>
-              <th>Recaudo total ($)</th>
-            </thead>
-            <tbody>
-              <tr v-for="(client, index) in localClients"
-                :key="index">
-                <td v-text="client.name"></td>
-                <td>{{ client.createdAt | date("DD-MM-YYYY") }}</td>
-                <td v-text="client.stories"></td>
-                <td v-text="client.tasks"></td>
-                <td>
-                  <span :class="`badge badge-${ client.amount == 0 ? 'danger' : 'success' }`">{{ client.amount | currency }}</span>
-                </td>
-              </tr>
-            </tbody>
-          </table>
+        <div class="card">
+          <div class="card-body">
+            <div class="card-title">Clientes</div>
+            <div class="table-responsive">
+              <table class="table">
+                <thead>
+                  <th>Cliente</th>
+                  <th>Fecha de creación</th>
+                  <th>Historias</th>
+                  <th>Tareas</th>
+                  <th>Recaudo total ($)</th>
+                </thead>
+                <tbody>
+                  <tr v-for="(client, index) in localClients"
+                    :key="index">
+                    <td v-text="client.name"></td>
+                    <td>{{ client.createdAt | date("DD-MM-YYYY") }}</td>
+                    <td v-text="client.stories"></td>
+                    <td v-text="client.tasks"></td>
+                    <td>
+                      <span :class="`badge badge-${ client.amount == 0 ? 'danger' : 'success' }`">{{ client.amount | currency }}</span>
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
         </div>
       </div>
     </div>
@@ -112,6 +118,7 @@
   import { DATABASE } from "@/firebase"
   import { UsersMixin } from "@/mixins/users"
   import AddHoursModal from "@/components/modals/AddHoursModal"
+  import ClientDashboard from "@/components/dashboard/Client"
   import NewClientModal from "@/components/modals/NewClientModal"
   import StoryListItem from "@/components/StoryListItem"
   import StatCard from "@/components/StatCard"
@@ -119,6 +126,7 @@
   export default {
     components: {
       AddHoursModal,
+      ClientDashboard,
       NewClientModal,
       StoryListItem,
       StatCard,
