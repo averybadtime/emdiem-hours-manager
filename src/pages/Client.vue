@@ -18,7 +18,8 @@
                 <div class="d-none d-md-block">
                   <button class="btn btn-primary btn-icon-text btn-edit-profile"
                     data-toggle="modal"
-                    data-target="#EditClientModal">
+                    data-target="#EditClientModal"
+                    v-if="$isAdmin() || $isClient()">
                     <i class="btn-icon-prepend" data-feather="edit"></i>
                     Editar información
                   </button>
