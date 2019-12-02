@@ -4,7 +4,7 @@
     <EditStoryModal @storyInfoUpdated="storyInfoUpdated" :story="selectedStory"/>
     <div class="d-flex justify-content-between">
       <h6 class="card-title mb-2">Historias</h6>
-      <button v-if="$isAdmin()"
+      <button v-if="$isAdmin() || $isPM()"
         class="btn btn-primary btn-icon-text mb-2"
         data-target="#NewStoryModal"
         data-toggle="modal">
