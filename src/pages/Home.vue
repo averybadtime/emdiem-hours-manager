@@ -31,7 +31,7 @@
       </div>
       <div class="col-6 col-md-3 grid-margin stretch-card">
         <stat-card
-          description="Todos los clientes registrados"
+          :description="$isAdmin() ? `Todos los clientes registrados` : `Proyectos en los que participo`"
           title="Clientes"
           type="danger"
           :stat="$store.state.clients.length"
@@ -39,18 +39,18 @@
       </div>
       <div class="col-6 col-md-3 grid-margin stretch-card">
         <stat-card
-          description="Recaudo de todos los clientes"
-          title="Recaudo"
+          description="Todas las historias en mis proyectos"
+          title="Historias"
           type="success"
-          :stat="$options.filters.currency(totalAmount)"
+          :stat="allStories"
         ></stat-card>
       </div>
       <div class="col-6 col-md-3 grid-margin stretch-card">
         <stat-card
-          description="Todos los clientes registrados"
-          title="Clientes"
+          description="Todas las tareas en mis proyectos"
+          title="Tareas"
           type="warning"
-          :stat="$store.state.clients.length"
+          :stat="allTasks"
         ></stat-card>
       </div>
     </div>
@@ -147,6 +147,18 @@
         rootRef       : DATABASE.ref(),
         totalAmount   : null,
         usersCount    : null
+      }
+    },
+    computed: {
+      allStories() {
+        let count = 0
+        this.localClients.forEach(x => count += x.stories)
+        return count
+      },
+      allTasks() {
+        let count = 0
+        this.localClients.forEach(x => count += x.tasks)
+        return count
       }
     },
     methods: {
