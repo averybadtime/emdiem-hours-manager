@@ -1,112 +1,115 @@
 <template>
-  <div class="page-content">
-    <AddHoursModal/>
-    <NewClientModal/>
-    <div class="d-flex justify-content-between align-items-center mb-3">
-      <h4 class="mb-3 mb-md-0">Dashboard</h4>
-      <div class="d-flex align-items-center flex-wrap text-nowrap">
-        <button type="button"
-          class="btn btn-outline-primary btn-icon-text mb-2 mb-md-0 mr-2"
-          @click="showAddHoursModal">
-          <i class="btn-icon-prepend" data-feather="plus-circle"></i>
-          Nueva compra de horas
-        </button>
-        <button type="button"
-          class="btn btn-primary btn-icon-text mb-2 mb-md-0"
-          @click="showNewClientModal">
-          <i data-feather="user-plus" class="btn-icon-prepend"></i>
-          Nuevo cliente
-        </button>
+  <div>
+    <div class="page-content">
+      <AddHoursModal/>
+      <NewClientModal/>
+      <div class="d-flex justify-content-between align-items-center mb-3">
+        <h4 class="mb-3 mb-md-0">Dashboard</h4>
+        <div class="d-flex align-items-center flex-wrap text-nowrap"
+          v-if="$isAdmin()">
+          <button type="button"
+            class="btn btn-outline-primary btn-icon-text mb-2 mb-md-0 mr-2"
+            @click="showAddHoursModal">
+            <i class="btn-icon-prepend" data-feather="plus-circle"></i>
+            Nueva compra de horas
+          </button>
+          <button type="button"
+            class="btn btn-primary btn-icon-text mb-2 mb-md-0"
+            @click="showNewClientModal">
+            <i data-feather="user-plus" class="btn-icon-prepend"></i>
+            Nuevo cliente
+          </button>
+        </div>
       </div>
-    </div>
-    <client-dashboard/>
-    <div class="row">
-      <div class="col-6 col-md-3 grid-margin stretch-card">
-        <stat-card
-          description="Todos los usuarios"
-          title="Usuarios"
-          type="primary"
-          :stat="usersCount"
-        ></stat-card>
+      <div class="row">
+        <div class="col-6 col-md-3 grid-margin stretch-card">
+          <stat-card
+            description="Todos los usuarios"
+            title="Usuarios"
+            type="primary"
+            :stat="usersCount"
+          ></stat-card>
+        </div>
+        <div class="col-6 col-md-3 grid-margin stretch-card">
+          <stat-card
+            description="Todos los clientes registrados"
+            title="Clientes"
+            type="danger"
+            :stat="clients.length"
+          ></stat-card>
+        </div>
+        <div class="col-6 col-md-3 grid-margin stretch-card">
+          <stat-card
+            description="Recaudo de todos los clientes"
+            title="Recaudo"
+            type="success"
+            :stat="$options.filters.currency(totalAmount)"
+          ></stat-card>
+        </div>
+        <div class="col-6 col-md-3 grid-margin stretch-card">
+          <stat-card
+            description="Todos los clientes registrados"
+            title="Clientes"
+            type="warning"
+            :stat="clients.length"
+          ></stat-card>
+        </div>
       </div>
-      <div class="col-6 col-md-3 grid-margin stretch-card">
-        <stat-card
-          description="Todos los clientes registrados"
-          title="Clientes"
-          type="danger"
-          :stat="clients.length"
-        ></stat-card>
-      </div>
-      <div class="col-6 col-md-3 grid-margin stretch-card">
-        <stat-card
-          description="Recaudo de todos los clientes"
-          title="Recaudo"
-          type="success"
-          :stat="$options.filters.currency(totalAmount)"
-        ></stat-card>
-      </div>
-      <div class="col-6 col-md-3 grid-margin stretch-card">
-        <stat-card
-          description="Todos los clientes registrados"
-          title="Clientes"
-          type="warning"
-          :stat="clients.length"
-        ></stat-card>
-      </div>
-    </div>
-    <div class="row">
-      <div class="col-12">
-        <div class="card">
-          <div class="card-body">
-            <div class="card-title">Clientes</div>
-            <div class="table-responsive">
-              <table class="table">
-                <thead>
-                  <th>Cliente</th>
-                  <th>Fecha de creación</th>
-                  <th>Historias</th>
-                  <th>Tareas</th>
-                  <th>Recaudo total ($)</th>
-                </thead>
-                <tbody>
-                  <tr v-for="(client, index) in localClients"
-                    :key="index">
-                    <td v-text="client.name"></td>
-                    <td>{{ client.createdAt | date("DD-MM-YYYY") }}</td>
-                    <td v-text="client.stories"></td>
-                    <td v-text="client.tasks"></td>
-                    <td>
-                      <span :class="`badge badge-${ client.amount == 0 ? 'danger' : 'success' }`">{{ client.amount | currency }}</span>
-                    </td>
-                  </tr>
-                </tbody>
-              </table>
+      <graphs-dashboard/>
+      <div class="row mb-4">
+        <div class="col-12">
+          <div class="card">
+            <div class="card-body">
+              <div class="card-title">Clientes</div>
+              <div class="table-responsive">
+                <table class="table table-striped">
+                  <thead>
+                    <th>Cliente</th>
+                    <th>Fecha de creación</th>
+                    <th>Historias</th>
+                    <th>Tareas</th>
+                    <th>Recaudo total ($)</th>
+                  </thead>
+                  <tbody>
+                    <tr v-for="(client, index) in localClients"
+                      :key="index">
+                      <td v-text="client.name"></td>
+                      <td>{{ client.createdAt | date("DD-MM-YYYY") }}</td>
+                      <td v-text="client.stories"></td>
+                      <td v-text="client.tasks"></td>
+                      <td>
+                        <span :class="`badge badge-${ client.amount == 0 ? 'danger' : 'success' }`">{{ client.amount | currency }}</span>
+                      </td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
             </div>
           </div>
         </div>
       </div>
-    </div>
-    <div class="row mt-3">
-      <div class="col-lg-6">
-        <div class="card">
-          <div class="card-body">
-            <h6 class="card-title">Últimas tareas</h6>
-            <task-list-item v-for="task in lastestTasks"
-              :key="task.key"
-              :task="task">
-            </task-list-item>
+      <div class="row">
+        <div class="col-lg-6 mb-4">
+          <div class="card">
+            <div class="card-body">
+              <h6 class="card-title">Últimas tareas</h6>
+              <task-list-item v-for="task in lastestTasks"
+                :key="task.key"
+                :task="task">
+              </task-list-item>
+            </div>
           </div>
         </div>
-      </div>
-      <div class="col-lg-6">
-        <div class="card">
-          <div class="card-body">
-            <h6 class="card-title">Últimas tareas</h6>
-            <story-list-item v-for="story in lastestStories"
-              :key="story.key"
-              :story="story"
-              no-tasks>
-            </story-list-item>
+        <div class="col-lg-6">
+          <div class="card">
+            <div class="card-body">
+              <h6 class="card-title">Últimas tareas</h6>
+              <story-list-item v-for="story in lastestStories"
+                :key="story.key"
+                :story="story"
+                no-tasks>
+              </story-list-item>
+            </div>
           </div>
         </div>
       </div>
@@ -118,7 +121,7 @@
   import { DATABASE } from "@/firebase"
   import { UsersMixin } from "@/mixins/users"
   import AddHoursModal from "@/components/modals/AddHoursModal"
-  import ClientDashboard from "@/components/dashboard/Client"
+  import GraphsDashboard from "@/components/dashboard/Graphs"
   import NewClientModal from "@/components/modals/NewClientModal"
   import StoryListItem from "@/components/StoryListItem"
   import StatCard from "@/components/StatCard"
@@ -126,7 +129,7 @@
   export default {
     components: {
       AddHoursModal,
-      ClientDashboard,
+      GraphsDashboard,
       NewClientModal,
       StoryListItem,
       StatCard,
@@ -152,17 +155,26 @@
     },
     methods: {
       async getClientStats() {
-        for (const client of this.clients) {
-          const stories = await this.getClientStories(client.slug)
-          const tasks = await this.getClientTasks(client.slug)
-          const amount = await this.getClientAmount(client.slug)
-          this.localClients.push({
-            amount,
-            createdAt: client.createdAt,
-            name: client.name,
-            stories,
-            tasks
-          })
+        try {
+          const Clients = (
+            await this.rootRef.child("clients")
+              .once("value")
+          ).val()
+          for (const ClientKey in Clients) {
+            const Client = Clients[ClientKey]
+            const stories = await this.getClientStories(Client.slug)
+            const tasks   = await this.getClientTasks(Client.slug)
+            const amount  = await this.getClientAmount(Client.slug)
+            this.localClients.push({
+              amount,
+              createdAt: Client.createdAt,
+              name     : Client.name,
+              stories,
+              tasks
+            })
+          }
+        } catch(ex) {
+          console.error(ex)
         }
       },
       async getClientAmount(clientKey) {
@@ -275,9 +287,9 @@
       }
     },
     created() {
+      this.getClientStats()
       this.getLastestTasks()
       this.getLastestStories()
-      this.getClientStats()
       this.getUsersCount()
       this.getTotalAmount()
     },
