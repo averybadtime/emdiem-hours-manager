@@ -32,11 +32,15 @@
 
 <script>
   import { DATABASE } from "@/firebase"
+  import { ClientsMixin } from "@/mixins/clients"
   import ApexChart from "vue-apexcharts"
   export default {
     components: {
       ApexChart
     },
+    mixins: [
+      ClientsMixin
+    ],
     data() {
       return {
         clients: null,
@@ -108,30 +112,6 @@
       }
     },
     methods: {
-      async getProjects() {
-        try {
-          let Projects
-          if (this.$isAdmin()) {
-            const AllProjects = (
-              await this.rootRef.child("clients")
-                .once("value")
-            ).val()
-            const ProjectKeys = {}
-            for (const key in AllProjects) {
-              ProjectKeys[key] = true
-            }
-            Projects = ProjectKeys
-          } else {
-            Projects = (
-              await this.rootRef.child(`projects-by-user/${ this.$store.state.user.uid }`)
-                .once("value")
-            ).val()
-          }
-          this.clients = Projects
-        } catch(ex) {
-          console.error(ex)
-        }
-      },
       async getStories() {
         try {
           const categories = []
@@ -224,7 +204,7 @@
       }
     },
     async created() {
-      await this.getProjects()
+      await this.getProjectsByAuthUser()
       await this.getStories()
       await this.getTasks()
       if (! this.$isDev()) {
